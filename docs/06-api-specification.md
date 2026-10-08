@@ -7248,11 +7248,12 @@ These are the events OpenWA actually emits. A webhook is registered with an `eve
 >   "extraGuestCount": 1,
 >   "eventName": "Game night",
 >   "responseMessageId": "3EB0D1E2F3A4B5C6D7E8",
->   "timestamp": 1786000000
+>   "timestamp": 1786000000,
+>   "contact": { "name": "Ada Lovelace", "pushName": "Ada" }
 > }
 > ```
 >
-> `response` is one of `going`, `not_going`, `maybe` or `unknown`. A guest who changes their answer sends a new RSVP with a new `responseMessageId`, so the latest event per `responderId` is the current answer. `extraGuestCount` is present only when WhatsApp sends it, and `eventName` only when the event's creation message can still be read from the message store.
+> `response` is one of `going`, `not_going`, `maybe` or `unknown`. A guest who changes their answer sends a new RSVP with a new `responseMessageId`, so the latest event per `responderId` is the current answer. `extraGuestCount` is present only when WhatsApp sends it, and `eventName` only when the event's creation message can still be read from the message store. `contact` names the responder like `message.received` names its sender: `name` from the account's addressbook, `pushName` from their own profile, each present only when known, and the whole field absent when the lookup finds neither. It comes from the same contact lookup as `GET /contacts/{contactId}`, so a responder the session has never seen a message from may arrive without one.
 >
 > WhatsApp encrypts every RSVP with a key derived from the event creation message, so only answers to events **this session received and still holds in its message store** can be reported: an event posted before the number was linked, or one evicted past `BAILEYS_MESSAGE_STORE_LIMIT`, yields no `event.response`. Answers given while the session was offline are reported when WhatsApp replays them on reconnect. whatsapp-web.js accepts the subscription and never fires the event.
 
